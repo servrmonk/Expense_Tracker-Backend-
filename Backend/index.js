@@ -1,20 +1,20 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const userRoute = require("./routes/UserRoutes");
+const db = require("./utils/db");
+
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
-app.post("/user/signup", (req, res) => {
-  console.log(req.body);
-  res.status(200).json("Signup Successfully");
-});
+app.use("/user", userRoute);
 
-app.post("/user/login", (req, res) => {
-  console.log(req.body);
-  res.status(200).json("Signup Successfully");
-});
-
-app.listen(3002, () => {
-  console.log("App started on localhost 3002");
-});
+db.sync()
+  .then(() => {
+    console.log("All the table synced successfully");
+    app.listen(3002, () => {
+      console.log("App started on localhost 3002");
+    });
+  })
+  .catch((err) => console.log("Error in syncing the tables ", err));
