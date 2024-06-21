@@ -12,7 +12,7 @@ export default function SignupPage() {
     e.preventDefault();
 
     const email = emailRef.current.value;
-    const name = emailRef.current.value;
+    const name = nameRef.current.value;
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current?.value || "";
 
