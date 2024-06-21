@@ -8,7 +8,7 @@ const UserControllers = {
       const userEmail = await User.findOne({ where: { email: email } });
       if (userEmail === null) {
         // console.log("Not found!");
-        const newUser = await User.create({ email, password });
+        const newUser = await User.create({ name,email, password });
         res.status(201).json(newUser);
       } else {
         console.log("User already exist ");

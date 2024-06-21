@@ -1,9 +1,10 @@
 import React, { useRef, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 
 export default function SignupPage() {
   const [isLogin, setIsLogin] = useState(false);
   const emailRef = useRef(null);
+  const nameRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
@@ -11,6 +12,7 @@ export default function SignupPage() {
     e.preventDefault();
 
     const email = emailRef.current.value;
+    const name = emailRef.current.value;
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current?.value || "";
 
@@ -20,12 +22,17 @@ export default function SignupPage() {
     }
 
     try {
-      const endpoint = isLogin ? `http://localhost:3002/user/login` : `http://localhost:3002/user/signup`;
+      const endpoint = isLogin
+        ? `http://localhost:3002/user/login`
+        : `http://localhost:3002/user/signup`;
       console.log("Inside the try catch block ");
-      const response = await axios.post(endpoint, { email, password });
-      console.log('Response:', response.data);
+      const response = await axios.post(endpoint, { name,email, password });
+      console.log("Response:", response.data);
     } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -42,7 +49,9 @@ export default function SignupPage() {
             {isLogin ? "Login to your account" : "Create your account"}
           </p>
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-2 text-lg font-medium">Email</label>
+            <label htmlFor="email" className="block mb-2 text-lg font-medium">
+              Email
+            </label>
             <input
               className="bg-slate-200 rounded-md w-full h-9 p-2"
               type="email"
@@ -52,7 +61,24 @@ export default function SignupPage() {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block mb-2 text-lg font-medium">Password</label>
+            <label htmlFor="name" className="block mb-2 text-lg font-medium">
+              Name
+            </label>
+            <input
+              className="bg-slate-200 rounded-md w-full h-9 p-2"
+              type="text"
+              id="name"
+              required
+              ref={nameRef}
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block mb-2 text-lg font-medium"
+            >
+              Password
+            </label>
             <input
               className="bg-slate-200 rounded-md w-full h-9 p-2"
               type="password"
@@ -63,7 +89,12 @@ export default function SignupPage() {
           </div>
           {!isLogin && (
             <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block mb-2 text-lg font-medium">Confirm Password</label>
+              <label
+                htmlFor="confirmPassword"
+                className="block mb-2 text-lg font-medium"
+              >
+                Confirm Password
+              </label>
               <input
                 className="bg-slate-200 rounded-md w-full h-9 p-2"
                 type="password"
