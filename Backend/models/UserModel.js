@@ -44,3 +44,6 @@ module.exports = user
 // salt is to create a random string so how many time i can randomize normal is 10 times 
 
 // then next thing is login is not work now u can't match the password for match u have to write a algorith for that
+
+
+//Dycrypt : now u save the password in hash value so only user know his password  so he will enter 12345 this password only so u convert this password 12345 to this hash and try comparing so what he essentially did was the developer invented the function that is bycrypt.compare so it will take the hash and the normal password they try to compare that the basically convert this one way incryption and it tries to compare behind the scene . obviously it don't get the same thing so it know the salts will be so there is a good amount of mathematics going on behind the scene 
