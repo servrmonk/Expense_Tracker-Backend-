@@ -27,26 +27,32 @@ const UserControllers = {
   },
   loginUser: async (req, res) => {
     const { name, email, password } = req.body;
-    console.log(req.body);
+    
     try {
-      const userVerifyEmail = await User.findOne({
+      const user = await User.findAll({
         where: { email: email },
       });
-      const userVerifyPassword = await User.findOne({
-        where: { password: password },
-      });
-
-      if (userVerifyEmail === null) {
-        res.status(403).json({ err: "User doesn't exist" });
+      console.log("user in userController ", user);
+      console.log(req.body);
+      if (user.length > 0) {
+        console.log("inside the user.length");
+        if (user[0].password === password) {
+          res
+            .status(200)
+            .json({ success: true, message: "User logged in successfully" });
+        } else {
+          return res
+            .status(400)
+            .json({ success: false, message: "Password is incorrect" });
+        }
       } else {
-        userVerifyPassword === null
-          ? res.status(403).json({ err: "Password doesn't match" })
-          : res.status(200).json({ msg: "User login status is true now" });
+        return res
+          .status(400)
+          .json({ success: false, message: "User Doesn't Exist" });
       }
     } catch (err) {
-      console.log("Error in Logging in  user ", err);
-      res.status(500).json({ err: "Failed to login user" });
+      res.status(500).json({ message: err, success: false });
     }
-  },
+  }
 };
 module.exports = UserControllers;
