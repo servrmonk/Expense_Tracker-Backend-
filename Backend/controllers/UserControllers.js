@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 
 const UserControllers = {
+  /* Creating the user  */
   createUser: async (req, res) => {
     const { name, email, password } = req.body;
     // console.log(req.body);
@@ -23,6 +24,8 @@ const UserControllers = {
       res.status(500).json({ err: "Failed to create user" });
     }
   },
+  /* Checking if the user exist or not if exist then login the user  */
+
   loginUser: async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -37,17 +40,23 @@ const UserControllers = {
         bcrypt.compare(password, user[0].password, (err, result) => {
           //password user has sent, hash is in usertable  and 3rd arg will take an error and the result(or it match or not) (first arg would be error)
           if (err) {
-            res.status(500).json({ success: false, message: "Something went wrong" });
-          } else if(result){
-            res.status(200).json({ success: true, message: "User logged in succesfully" });
-            
-          }
-            else {
-            return res.status(400).json({ success: false, message: "Password is incorrect" });
+            res
+              .status(500)
+              .json({ success: false, message: "Something went wrong" });
+          } else if (result) {
+            res
+              .status(200)
+              .json({ success: true, message: "User logged in succesfully" });
+          } else {
+            return res
+              .status(400)
+              .json({ success: false, message: "Password is incorrect" });
           }
         });
       } else {
-        return res.status(404).json({ success: false, message: "User Doesn't Exist" });
+        return res
+          .status(404)
+          .json({ success: false, message: "User Doesn't Exist" });
       }
     } catch (err) {
       res.status(500).json({ message: err, success: false });
