@@ -4,11 +4,22 @@ const cors = require("cors");
 const userRoute = require("./routes/UserRoutes");
 const db = require("./utils/db");
 
+const expense = require("./models/ExpenseModel");
+const user = require("./models/UserModel");
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
 app.use("/user", userRoute);
+
+user.hasMany(expense, {
+  foreignKey: "user_id",
+  as: "expense",
+});
+expense.belongsTo(user, {
+  foreignKey: "user_id",
+  as: "user",
+});
 
 db.sync()
   .then(() => {
