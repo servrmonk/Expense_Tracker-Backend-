@@ -1,6 +1,6 @@
 const Expense = require("../models/ExpenseModel");
-
 const ExpenseController = {
+  
   /* Getting all the available Expense From mysql2 */
   getAvailableExpense: async (req, res) => {
     try {
@@ -12,10 +12,21 @@ const ExpenseController = {
     }
   },
   /* Creating the  Expense in mysql2 */
-  createSlotToAvailable: async (req, res) => {
-    const { name, time, slot, slotId } = req.body;
+  createExpense: async (req, res) => {
+    // const { expenseamount, category, description } = req.body;
+    // const {id} = req.params;
+    let data = {
+      user_id:req.params.id,
+      expenseamount:req.body.expenseamount,
+      category:req.body.category,
+      description:req.body.description
+    };
+
+    // console.log("id in req.params is ",id);
+
     try {
-      const newSlot = await AvailableSlot.create({ name, time, slot, slotId });
+      const newSlot = await Expense.create(data);
+      // const newSlot = await Expense.create({ expenseamount, category, description });
       res.status(201).json(newSlot);
     } catch (error) {
       console.log("Error in creating slot", error);
@@ -23,13 +34,13 @@ const ExpenseController = {
     }
   },
   /* Updating all the available Expense From mysql2 */
-  updateSlot: async (req, res) => {
+  updateExpense: async (req, res) => {
     const { id } = req.params;
     const { slot } = req.body;
     console.log("Req.params in update slot==>>", req.params);
     console.log("req.body update slot ", req.body);
     try {
-      const slotToUpdate = await AvailableSlot.findByPk(id);
+      const slotToUpdate = await Expense.findByPk(id);
       if (!slotToUpdate) {
         return res.status(404).json({ error: "Slot not found" });
       }
@@ -42,11 +53,11 @@ const ExpenseController = {
     }
   },
   /* Deleting all the available Expense From mysql2 */
-  deleteSlot: async (req, res) => {
+  deleteExpense: async (req, res) => {
     const { id } = req.params;
 
     try {
-      const slotToDelete = await AvailableSlot.findByPk(id);
+      const slotToDelete = await Expense.findByPk(id);
       if (!slotToDelete) {
         return res.status(404).json({ error: "Slot not found" });
       }

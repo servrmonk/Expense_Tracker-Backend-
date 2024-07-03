@@ -5,7 +5,7 @@ const UserControllers = {
   /* Creating the user  */
   createUser: async (req, res) => {
     const { name, email, password } = req.body;
-    // console.log(req.body);
+    // console.log("Inside createUser",req.body);
     try {
       const userEmail = await User.findOne({ where: { email: email } });
       if (userEmail === null) {
