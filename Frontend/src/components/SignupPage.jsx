@@ -1,12 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import axios from "axios";
+import { UserContext } from "../store/context";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
-  const [isLogin, setIsLogin] = useState(false);
+  const { login, setLogin } = useContext(UserContext);
+  const [loginStatus, setLoginStatus] = useState(false);
   const emailRef = useRef(null);
   const nameRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
+  const navigate = useNavigate();
+
+  const loginHandler = (idToken) => {
+    setLogin(true);
+    localStorage.setItem("idToken", `${idToken}`);
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -16,37 +25,41 @@ export default function SignupPage() {
     const password = passwordRef.current.value;
     const confirmPassword = confirmPasswordRef.current?.value || "";
 
-    if (!isLogin && password !== confirmPassword) {
+    if (!loginStatus && password !== confirmPassword) {
       console.log("Please enter the correct password in both input boxes");
       return;
     }
 
     try {
-      const endpoint = isLogin
+      const endpoint = loginStatus
         ? `http://localhost:3002/user/login`
         : `http://localhost:3002/user/signup`;
       console.log("Inside the try catch block ");
-      const response = await axios.post(endpoint, { name,email, password });
+      const response = await axios.post(endpoint, { name, email, password });
+      navigate("/userExpense");
+      loginHandler(response.data.idToken);
       console.log("Response:", response.data);
     } catch (error) {
       console.error(
         "Error:",
         error.response ? error.response.data : error.message
       );
+      navigate("/");
     }
   };
 
   const switchAuthModeHandler = () => {
-    setIsLogin((prevState) => !prevState);
-    console.log("Login status now:", isLogin);
+    setLoginStatus((prevState) => !prevState);
+    console.log("Login status inside switch:", loginStatus);
   };
+  console.log("Login status now outside switch", loginStatus);
 
   return (
     <div className="bg-gradient-to-tl from-amber-200 to-indigo-700 min-h-screen flex items-center justify-center p-8">
       <div className="bg-white bg-opacity-10 shadow-2xl rounded-3xl p-7 w-full max-w-md">
         <form onSubmit={submitHandler}>
           <p className="font-black font-serif text-2xl mb-4">
-            {isLogin ? "Login to your account" : "Create your account"}
+            {loginStatus ? "Login to your account" : "Create your account"}
           </p>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2 text-lg font-medium">
@@ -87,7 +100,7 @@ export default function SignupPage() {
               ref={passwordRef}
             />
           </div>
-          {!isLogin && (
+          {!loginStatus && (
             <div className="mb-4">
               <label
                 htmlFor="confirmPassword"
@@ -108,9 +121,9 @@ export default function SignupPage() {
             type="submit"
             className="w-full h-10 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-medium text-sm px-5 py-2.5 mb-4"
           >
-            {isLogin ? "Login" : "Create my account"}
+            {loginStatus ? "Login" : "Create my account"}
           </button>
-          {isLogin && (
+          {loginStatus && (
             <a
               className="block text-center text-blue-800 hover:text-amber-200 mb-4"
               href="/forgetPassword"
@@ -125,12 +138,12 @@ export default function SignupPage() {
             </p>
             <hr className="w-full bg-gray-400" />
           </div>
-          {isLogin ? (
+          {loginStatus ? (
             <p className="text-center">
               Don't have an account?{" "}
               <button
                 type="button"
-                onClick={switchAuthModeHandler}
+                onClick={() => switchAuthModeHandler()}
                 className="text-blue-700 underline"
               >
                 Sign up here
@@ -141,7 +154,7 @@ export default function SignupPage() {
               Login with an existing account{" "}
               <button
                 type="button"
-                onClick={switchAuthModeHandler}
+                onClick={() => switchAuthModeHandler()}
                 className="text-blue-700 underline"
               >
                 Login

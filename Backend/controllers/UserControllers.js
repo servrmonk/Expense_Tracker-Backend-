@@ -1,5 +1,9 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
+const crypto = require('crypto'); // Example: generate a random hexadecimal string
+
+
+
 
 const UserControllers = {
   /* Creating the user  */
@@ -28,6 +32,7 @@ const UserControllers = {
 
   loginUser: async (req, res) => {
     const { name, email, password } = req.body;
+    const randomBytes = crypto.randomBytes(16).toString('hex');
 
     try {
       const user = await User.findAll({
@@ -46,7 +51,7 @@ const UserControllers = {
           } else if (result) {
             res
               .status(200)
-              .json({ success: true, message: "User logged in succesfully" });
+              .json({ success: true, message: "User logged in succesfully",idToken:randomBytes} );
           } else {
             return res
               .status(400)
