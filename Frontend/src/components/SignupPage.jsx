@@ -4,7 +4,7 @@ import { UserContext } from "../store/context";
 import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
-  const { login, setLogin } = useContext(UserContext);
+  const { login, setLogin,setUserId } = useContext(UserContext);
   const [loginStatus, setLoginStatus] = useState(false);
   const emailRef = useRef(null);
   const nameRef = useRef(null);
@@ -38,6 +38,8 @@ export default function SignupPage() {
       const response = await axios.post(endpoint, { name, email, password });
       navigate("/userExpense");
       loginHandler(response.data.idToken);
+      localStorage.setItem("user_id",response.data.user_id)
+      setUserId(response.data.user_id)
       console.log("Response:", response.data);
     } catch (error) {
       console.error(

@@ -10,12 +10,12 @@ const {
 /* Available routes for expense */
 
 router.post("/createExpense/:id", createExpense);
-router.get("/getExpense", getAvailableExpense);
+// router.get("/getExpense", getAvailableExpense);
 
-console.log("INside the expense routes");
-// router.get("/getExpenseById/:id", getAvailableExpense);
+
 router.put("/updateExpense/:id", updateExpense);
 router.delete("/deleteExpense/:id", deleteExpense);
+router.get("/getExpenseById/:user_id", getAvailableExpense);
 
 // router.get('/:id',productController.getOneProduct);
 // router.put('/:id',productController.updateProduct);

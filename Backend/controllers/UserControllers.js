@@ -1,9 +1,6 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
-const crypto = require('crypto'); // Example: generate a random hexadecimal string
-
-
-
+const crypto = require("crypto"); // Example: generate a random hexadecimal string
 
 const UserControllers = {
   /* Creating the user  */
@@ -17,7 +14,12 @@ const UserControllers = {
           console.log("Error in bcrypt.hash ", err);
           console.log("Hash======> ", hash);
           const newUser = await User.create({ name, email, password: hash });
-          res.status(201).json(newUser);
+          res.status(201).json({
+            success: true,
+            message: "User created in succesfully",
+            idToken: randomBytes,
+            user_id:newUser[0].id
+          });
         });
       } else {
         console.log("User already exist ");
@@ -32,18 +34,18 @@ const UserControllers = {
 
   loginUser: async (req, res) => {
     const { name, email, password } = req.body;
-    const randomBytes = crypto.randomBytes(16).toString('hex');
+    const randomBytes = crypto.randomBytes(16).toString("hex");
 
     try {
       const user = await User.findAll({
         where: { email: email },
       });
-      console.log("user in userController ", user);
-      console.log(req.body);
+      // console.log("user in userController=======> ", user[0].id);
+      
+      // console.log(req.body);
       if (user.length > 0) {
         console.log("yes user.length");
         bcrypt.compare(password, user[0].password, (err, result) => {
-          //password user has sent, hash is in usertable  and 3rd arg will take an error and the result(or it match or not) (first arg would be error)
           if (err) {
             res
               .status(500)
@@ -51,7 +53,12 @@ const UserControllers = {
           } else if (result) {
             res
               .status(200)
-              .json({ success: true, message: "User logged in succesfully",idToken:randomBytes} );
+              .json({
+                success: true,
+                message: "User logged in succesfully",
+                idToken: randomBytes,
+                user_id:user[0].id
+              });
           } else {
             return res
               .status(400)

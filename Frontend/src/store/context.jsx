@@ -3,44 +3,70 @@ import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext();
 
+const axiosInstance = axios.create({
+  baseURL: "http://127.0.0.1:3002",
+});
+
 const UserContextProvider = ({ children }) => {
-  
-  const [login, setLogin] = useState(localStorage.getItem("idToken")||false);
+  const [login, setLogin] = useState(localStorage.getItem("idToken") || false);
+
   const [userExpense, setUserExpense] = useState([]);
-  
+  const [user_id, setUserId] = useState(
+    localStorage.getItem("user_id") || null
+  );
 
-  const addExpense = (data) => {
-    setUserExpense((exp) => [...exp, data]);
+  const addExpense = async (obj) => {
+    console.log("User_id is ", user_id);
+    console.log("ob", obj);
+    try {
+      const response = await axiosInstance.post(
+        `/expense/createExpense/${user_id}`,
+        obj
+      );
+      setUserExpense((exp) => [...exp, obj]);
+    } catch (error) {
+      console.log("Error in postData", error);
+    }
   };
 
-  const deleteExpense = (id) => {
-    // setUserExpense((exp) => exp.filter((expense) => expense.id !== id));
+  const deleteExpense = async (expenseId) => {
+    console.log("expense id for delete", expenseId);
+    try {
+      const response = await axiosInstance.delete(
+        `/expense/deleteExpense/${expenseId}`
+      );
+      // setUserExpense((exp) => exp.filter((expense) => expense.id !== expenseId));
+    } catch (error) {
+      console.log("Error in postData", error);
+    }
+  };
+  const editExpense = async (id, updatedExpense) => {
+    try {
+      const response = await axiosInstance.put(`/expense/updateExpense/${id}`, updatedExpense);
+      setUserExpense((exp) =>
+        exp.map((expense) => (expense.id === id ? { ...expense, ...updatedExpense } : expense))
+      );
+    } catch (error) {
+      console.log("Error in update expense", error);
+    }
   };
 
-  const editExpense = (id, updatedExpense) => {
-    // setUserExpense((exp) =>
-    //   exp.map((expense) =>
-    //     expense.id === id ? { ...expense, ...updatedExpense } : expense
-    //   )
-    // );
-  };
-
-  // useEffect(() => {
-  //   const fetchExpenses = async () => {
-  //     try {
-  //       const response = await axios.get("/api/expenses");
-  //       setUserExpense(response.data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch expenses", error);
-  //     }
-  //   };
-  //   fetchExpenses();
-  // }, []);
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        const response = await axiosInstance.get(`/expense/getExpenseById/${user_id}`);
+        setUserExpense(response.data);
+        console.log("response in useeffect ", response.data);
+      } catch (error) {
+        console.error("Failed to fetch expenses", error);
+      }
+    };
+    fetchExpenses();
+  }, []);
   const Logout = () => {
     setLogin(false);
-    localStorage.removeItem('idToken')
+    localStorage.removeItem("idToken");
   };
- 
 
   return (
     <UserContext.Provider
@@ -51,7 +77,8 @@ const UserContextProvider = ({ children }) => {
         addExpense,
         deleteExpense,
         editExpense,
-        Logout
+        Logout,
+        setUserId,
       }}
     >
       {children}

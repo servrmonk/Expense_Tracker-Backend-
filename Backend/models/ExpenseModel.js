@@ -6,6 +6,7 @@ const user = sequelize.define("expenses", {
  
   expenseamount: Sequelize.INTEGER,
   category: Sequelize.STRING,
+  date:Sequelize.DATEONLY,
   description: Sequelize.STRING,
 });
 

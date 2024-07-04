@@ -1,14 +1,15 @@
 const Expense = require("../models/ExpenseModel");
 const ExpenseController = {
-  
   /* Getting all the available Expense From mysql2 */
   getAvailableExpense: async (req, res) => {
+    const {user_id} = req.params;
     try {
-      const slots = await Expense.findAll({ where: { email: email } });
-      res.json(slots);
+      // const slots = await Expense.findAll({});
+      const availExpense = await Expense.findAll({ where: { user_id: user_id } });
+      res.json(availExpense);
     } catch (error) {
-      console.log("Error in fetching slots", error);
-      res.status(500).json({ error: "Failed to fetch slots" });
+      console.log("Error in getting expense", error);
+      res.status(500).json({ error: "Failed to fetch expense" });
     }
   },
   /* Creating the  Expense in mysql2 */
@@ -16,10 +17,11 @@ const ExpenseController = {
     // const { expenseamount, category, description } = req.body;
     // const {id} = req.params;
     let data = {
-      user_id:req.params.id,
-      expenseamount:req.body.expenseamount,
-      category:req.body.category,
-      description:req.body.description
+      user_id: req.params.id,
+      expenseamount: req.body.expenseamount,
+      category: req.body.category,
+      date: req.body.date,
+      description: req.body.description,
     };
 
     // console.log("id in req.params is ",id);
@@ -34,24 +36,32 @@ const ExpenseController = {
     }
   },
   /* Updating all the available Expense From mysql2 */
+  /* Updating an Expense in mysql2 */
   updateExpense: async (req, res) => {
     const { id } = req.params;
-    const { slot } = req.body;
-    console.log("Req.params in update slot==>>", req.params);
-    console.log("req.body update slot ", req.body);
+    const { expenseamount, category, date, description } = req.body;
+
     try {
-      const slotToUpdate = await Expense.findByPk(id);
-      if (!slotToUpdate) {
-        return res.status(404).json({ error: "Slot not found" });
+      const expenseToUpdate = await Expense.findByPk(id);
+      if (!expenseToUpdate) {
+        return res.status(404).json({ error: "Expense not found" });
       }
-      slotToUpdate.slot = slot;
-      await slotToUpdate.save();
-      res.json(slotToUpdate);
+
+      // Update the fields
+      expenseToUpdate.expenseamount = expenseamount;
+      expenseToUpdate.category = category;
+      expenseToUpdate.date = date;
+      expenseToUpdate.description = description;
+
+      await expenseToUpdate.save();
+
+      res.json(expenseToUpdate);
     } catch (error) {
-      console.log("Error in updating slot", error);
-      res.status(500).json({ error: "Failed to update slot" });
+      console.log("Error in updating expense", error);
+      res.status(500).json({ error: "Failed to update expense" });
     }
   },
+
   /* Deleting all the available Expense From mysql2 */
   deleteExpense: async (req, res) => {
     const { id } = req.params;
