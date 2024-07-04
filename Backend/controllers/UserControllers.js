@@ -2,6 +2,14 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto"); // Example: generate a random hexadecimal string
 
+const jwt  = require('jsonwebtoken');
+
+/* To generate jwt token for userId */
+function generateAccessToken(id){
+  return jwt.sign({userId:id},'secretRandomKey'); //this function generate the which generates the key we will call it when user is successfully login and backend will happy with it 
+}
+
+
 const UserControllers = {
   /* Creating the user  */
   createUser: async (req, res) => {
@@ -17,8 +25,9 @@ const UserControllers = {
           res.status(201).json({
             success: true,
             message: "User created in succesfully",
-            idToken: randomBytes,
-            user_id:newUser[0].id
+            // idToken: randomBytes,
+            user_id:newUser[0].id,
+            token:generateAccessToken(newUser[0].id)
           });
         });
       } else {
@@ -30,6 +39,8 @@ const UserControllers = {
       res.status(500).json({ err: "Failed to create user" });
     }
   },
+
+ 
   /* Checking if the user exist or not if exist then login the user  */
 
   loginUser: async (req, res) => {
@@ -56,8 +67,9 @@ const UserControllers = {
               .json({
                 success: true,
                 message: "User logged in succesfully",
-                idToken: randomBytes,
-                user_id:user[0].id
+                // idToken: randomBytes,
+                user_id:user[0].id,
+                token:generateAccessToken(user[0].id)
               });
           } else {
             return res

@@ -2,10 +2,15 @@ const Expense = require("../models/ExpenseModel");
 const ExpenseController = {
   /* Getting all the available Expense From mysql2 */
   getAvailableExpense: async (req, res) => {
-    const {user_id} = req.params;
+    // console.log("requsest in getavailable exp ",req); //here i have attached the user id in req obj using middleware auth.js check in routes
+    const user_id = req.user.id;
+    // console.log("user_id in getexp ",user_id);
+    // const {user_id} = req.params;
     try {
       // const slots = await Expense.findAll({});
-      const availExpense = await Expense.findAll({ where: { user_id: user_id } });
+      const availExpense = await Expense.findAll({
+        where: { user_id: user_id },
+      });
       res.json(availExpense);
     } catch (error) {
       console.log("Error in getting expense", error);
@@ -16,8 +21,9 @@ const ExpenseController = {
   createExpense: async (req, res) => {
     // const { expenseamount, category, description } = req.body;
     // const {id} = req.params;
+    const user_id = req.user.id;
     let data = {
-      user_id: req.params.id,
+      user_id: user_id,
       expenseamount: req.body.expenseamount,
       category: req.body.category,
       date: req.body.date,

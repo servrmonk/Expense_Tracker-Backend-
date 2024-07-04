@@ -1,0 +1,38 @@
+if u write User.hasMany(Expense); and Expense.belongsTo(User) automatically userid will come in Expense
+
+userId in header in axios u can set the header once and use it everywhere
+we are saving the userid in localstorage so user id must be the secret 
+userid should be not easy and not accessible
+
+u have to encrypt a user id with secretkey(random string)
+we can't use bcrypt because we get a hash and then we can't reverse it (dcrypt is one way hashing )
+
+we need 2 way hashing where encryption and dcryption will be possible
+userId -> bcrypt -> hash
+userId + secretkey -> encryption -> token( a secret pass)
+header -> token  in frontend
+token -> decrypt it with secret key -> user id 
+
+'kdiesiejkus' -> decrypt it with secret key -> userId
+this token is our secret key to access the backend 
+here sharpener also use this 
+ 
+so here till now instead of using user id we use a token which is encrypted from of our user id and the reason is to keep secret 1,2,3,4,5 is very simple to make it simple we will use token system 
+as we use bcrypt here i have also json web token library(jwt)
+
+const jwt = require('jsonwebtoken')
+so basically when i try to generate a token or a new token so jwt takes 2 things one is payload what i want to encrypt and other is secretkey means random string and number '28jduels9s9ls82ldiwl' never every share ur secret key and never ever push ur secret key to git . for decrypt u have to use the secret key only this is the secret key use to lock and open the doop :)
+
+now where and when do i have to use this we will use this when user login successfully means email and password correctly and in backend where we send the message user logged in succesfully, status code there u have to send token : generateAccessToken(user[0].id)
+u can even visit jwt.io  
+jwt has 3 parts to it header body footer u can visit website
+iat is issuing time
+
+to dcrypt it we need the secret key
+save the token in the localstorage
+in header's i am configuring the authorization status with token
+for decrypt 
+const user = jwt.verify(token,'secretkey)
+in the backend we will dcrypt the token once we dcrypt the tokenwe get the userid once we get the userid we will figureout which user it is and once i figure out we can easily do our change 
+
+in frontend when i am getting expenses so what i have done is 
